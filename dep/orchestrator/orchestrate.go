@@ -319,8 +319,10 @@ func dlErr(c dep.Component) func(err error) error {
 
 func (o *Orchestrator) Run(name string, args ...string) error {
 	comp := o.Component(name)
-	err := comp.Run(args...)
-	return fmt.Errorf(" err: %v", err)
+	if err := comp.Run(args...); err != nil {
+		return fmt.Errorf(" err: %v", err)
+	}
+	return nil
 }
 
 func (o *Orchestrator) Stop(name string) error {
