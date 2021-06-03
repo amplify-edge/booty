@@ -1,6 +1,7 @@
 package components
 
 import (
+	"fmt"
 	"go.amplifyedge.org/booty-v2/dep"
 	"go.amplifyedge.org/booty-v2/internal/fileutil"
 	"go.amplifyedge.org/booty-v2/internal/osutil"
@@ -23,7 +24,7 @@ func commonInstall(c dep.Component, filesMap map[string][]interface{}) (*store.I
 	for k, v := range filesMap {
 		sum, err := fileutil.Copy(k, v[0].(string))
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("Copying %s to %s, err: %v", k, v[0].(string), err)
 		}
 		installedName := v[0].(string)
 		installedMode := v[1].(int)

@@ -319,7 +319,8 @@ func dlErr(c dep.Component) func(err error) error {
 
 func (o *Orchestrator) Run(name string, args ...string) error {
 	comp := o.Component(name)
-	return comp.Run(args...)
+	err := comp.Run(args...)
+	return fmt.Errorf(" err: %v", err)
 }
 
 func (o *Orchestrator) Stop(name string) error {
@@ -385,6 +386,7 @@ func (o *Orchestrator) InstallAll() error {
 			}
 		}
 	}
+	o.logger.Info("Installed successfully")
 	return nil
 }
 
@@ -406,11 +408,13 @@ func (o *Orchestrator) Uninstall(name string) error {
 
 func (o *Orchestrator) UninstallAll() error {
 	o.logger.Info("uninstall all components")
+	// Best effort uninstall everything first. Not everything may be installed.
+	// That can happen if an install failed or uninstall-all was interrupted.
 	for _, c := range o.components {
 		if c.Name() != binName {
 			if err := c.Uninstall(); err != nil {
 				o.logger.Infof("uninstalling %s, version: %s", c.Name(), c.Version())
-				return errutil.New(errutil.ErrUninstallComponent, fmt.Errorf("name: %s, version: %s, err: %v", c.Name(), c.Version(), err))
+				o.logger.Error(errutil.New(errutil.ErrUninstallComponent, fmt.Errorf("name: %s, version: %s, err: %v", c.Name(), c.Version(), err)))
 			}
 		}
 	}
@@ -447,6 +451,7 @@ func (o *Orchestrator) AllInstalledComponents() ([]byte, error) {
 	for _, p := range pkgs {
 		printRow(tw, "\n%s\t\t%s", p.Name, p.Version)
 	}
+	printRow(tw, "\n%s%s", "", "")
 	err = tw.Flush()
 	if err != nil {
 		return nil, err
@@ -467,8 +472,9 @@ func printRow(out io.Writer, format, key string, value string) {
 func (o *Orchestrator) RunAll() error {
 	for _, c := range o.components {
 		if c.IsService() {
+			o.logger.Infof("running %s", c.Name())
 			if err := c.Run(); err != nil {
-				return err
+				return fmt.Errorf("%s: %v", c.Name(), err)
 			}
 		}
 	}

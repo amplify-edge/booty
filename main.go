@@ -2,6 +2,7 @@ package main
 
 import (
 	"go.amplifyedge.org/booty-v2/dep"
+	"go.amplifyedge.org/booty-v2/internal/osutil"
 	"go.amplifyedge.org/booty-v2/dep/orchestrator"
 )
 
@@ -18,7 +19,13 @@ func init() {
 
 func main() {
 	logger := conductor.Logger()
+	if err := osutil.DetectPreq(); err != nil {
+		logger.Errorf("error: %v", err)
+		return
+	}
+
 	if err := conductor.Command().Execute(); err != nil {
 		logger.Errorf("error: %v", err)
+		return
 	}
 }

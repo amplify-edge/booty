@@ -54,6 +54,7 @@ fetchAndInstall() {
   tar -C /tmp -zxvf "/tmp/${tag_format}"
   # install
   runAsRoot install -m755 /tmp/${BIN_NAME} "${INSTALL_LOC}/${BIN_NAME}"
+  echo "installation complete"
 }
 
 if [ ! "$EX_CURL" ]; then

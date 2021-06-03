@@ -160,7 +160,14 @@ func GetBinDir() string {
 }
 
 func GetGoPath() string {
-	return os.Getenv("GOPATH")
+	gopath := os.Getenv("GOPATH")
+	if len(gopath) == 0 {
+		// Default GOPATH is $HOME/go if the env isn't set.
+		if dirname, err := os.UserHomeDir(); err == nil {
+			gopath = filepath.Join(dirname, "go")
+		}
+	}
+	return gopath
 }
 
 func GetEtcDir() string {
@@ -226,11 +233,17 @@ func DetectPreq() error {
 		executableName += ".exe"
 	}
 	golangExists := ExeExists(executableName)
-	gopathExists := checkEnv("GOPATH")
-	if golangExists && gopathExists {
-		return nil
+	gopath := GetGoPath()
+	if !golangExists {
+		return fmt.Errorf("golang executable doesn't exists, please install golang first")
 	}
-	return fmt.Errorf("golang executable doesn't exists, please install golang first")
+	if len(gopath) == 0 {
+		return fmt.Errorf("GOPATH env is not set. Must set GOPATH.")
+	}
+	if !DirExists(gopath) {
+		return fmt.Errorf("GOPATH dir %s does not exist.", gopath)
+	}
+	return nil
 }
 
 func ExeExists(cmd string) bool {
