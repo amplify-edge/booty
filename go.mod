@@ -33,10 +33,8 @@ require (
 	go.amplifyedge.org/shared-v2/tool/bs-crypt v0.0.0-20210219053301-6556f04a088c
 	go.amplifyedge.org/shared-v2/tool/bs-lang v0.0.0-20210320051439-7e70b8c840c1
 	go.uber.org/zap v1.16.0
-	golang.org/x/crypto v0.0.0-20210218145215-b8e89b74b9df
-	golang.org/x/mod v0.4.1
-	golang.org/x/net v0.0.0-20210316092652-d523dce5a7f4 // indirect
-	golang.org/x/sys v0.0.0-20210324051608-47abb6519492 // indirect
+	golang.org/x/crypto v0.1.0
+	golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4
 	google.golang.org/api v0.42.0 // indirect
 	google.golang.org/genproto v0.0.0-20210319143718-93e7006c17a6 // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
